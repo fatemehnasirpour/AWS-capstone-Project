@@ -5,3 +5,7 @@ provider "aws" {
 resource "aws_vpc" "wordpress-vpc" {
   cidr_block = "10.0.0.0/16"
 }
+tag {
+  name = "wordpress-vpc"
+}
+
