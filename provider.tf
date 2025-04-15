@@ -20,3 +20,12 @@ resource "aws_subnet" "public_subnet" {
     Name = "public-subnet"
   }
 }
+# Creating route table
+resource "aws_route_table" "custom-route-table" {
+  vpc_id = aws_vpc.wordpress-vpc.id
+
+  tags = {
+    Name = "custom-route-table"
+  }
+}
+
