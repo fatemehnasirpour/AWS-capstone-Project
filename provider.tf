@@ -23,9 +23,17 @@ resource "aws_subnet" "public_subnet" {
 # Creating route table
 resource "aws_route_table" "custom-route-table" {
   vpc_id = aws_vpc.wordpress-vpc.id
-  
+
   tags = {
     Name = "custom-route-table"
   }
 }
 
+# Creating Internet Gateway and attach to subnet
+resource "aws_internet_gateway" "my-internet-gateway" {
+  vpc_id = aws_vpc.wordpress-vpc.id
+
+  tags = {
+    Name = "my-internet-gateway"
+  }
+}
