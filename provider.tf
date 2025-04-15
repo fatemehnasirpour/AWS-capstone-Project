@@ -6,7 +6,8 @@ resource "aws_vpc" "wordpress-vpc" {
   cidr_block = "10.0.0.0/16"
     tags = {
       Name = "wordpress-vpc"
-  }
+    }
+}
 # Creating Subnet
 resource “aws_subnet” “prod-subnet-public-1” {
     vpc_id = “${aws_vpc.prod-vpc.id}”
