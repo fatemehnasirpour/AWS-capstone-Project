@@ -89,3 +89,12 @@ resource "aws_instance" "web_server" {
   }
 }
 
+# Creating Database Subnet Group
+resource "aws_db_subnet_group" "wordpress_db_subnet_group" {
+  name       = "wordpress-db-subnet-group"
+  subnet_ids = [aws_subnet.public_subnet.id]  
+
+  tags = {
+    Name = "wordpress-db-subnet-group"
+  }
+}
