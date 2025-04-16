@@ -32,7 +32,7 @@ resource "aws_route_table" "custom-route-table" {
 # Subnet Association with Route Table
 resource "aws_route_table_association" "public_assoc" {
   subnet_id      = aws_subnet.public_subnet.id
-  route_table_id = aws_route_table.custom_rt.id
+  route_table_id = aws_route_table.custom-route-table.id
 }
 
 # Creating Internet Gateway and attach to subnet
@@ -46,7 +46,7 @@ resource "aws_internet_gateway" "my-internet-gateway" {
 
 # Creating security Group
 resource "aws_security_group" "web-security-group" {
-  name        = "web-sg"
+  name        = "web-security-group"
   description = "Allow SSH and HTTP"
   vpc_id      = aws_vpc.wordpress-vpc.id
 
