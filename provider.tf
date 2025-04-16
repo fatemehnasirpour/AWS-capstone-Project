@@ -71,3 +71,22 @@ resource "aws_security_group" "web-security-group" {
   }
 }
 
+# Creating EC2 Instanc
+resource "aws_instance" "web_server" {
+  ami           = "ami-087f352c165340ea1"  # Amazon Linux 2023 in us-west-2
+  instance_type = "t2.micro"
+  vpc_id        = aws_vpc.wordpress-vpc.id
+  subnet_id     = aws_subnet.public_subnet.id
+  key_name      = "vockey"  
+
+  vpc_security_group_ids = [
+    aws_security_group.web-security-group.id
+  ]
+
+  associate_public_ip_address = enable
+
+  tags = {
+    Name = "web-server"
+  }
+}
+
