@@ -99,6 +99,7 @@ resource "aws_db_subnet_group" "wordpress_db_subnet_group" {
 }
 # Creating RDS MySQL
 resource "aws_db_instance" "wordpress_db" {
+  identifier              = "wordpress-db" 
   allocated_storage       = 20
   engine                  = "mysql"
   engine_version          = "8.0"
@@ -121,7 +122,7 @@ resource "aws_db_instance" "wordpress_db" {
   # Networking
   vpc_security_group_ids  = [aws_security_group.web-security-group.id]
   db_subnet_group_name    = "wordpress-db-subnet-group"
-  availability_zone       = "us-west-2a"
+  availability_zone       = "us-west-2a" 
 
   # Storage
   storage_type            = "gp2"
