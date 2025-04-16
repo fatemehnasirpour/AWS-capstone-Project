@@ -103,7 +103,6 @@ resource "aws_db_instance" "wordpress_db" {
   engine                  = "mysql"
   engine_version          = "8.0"
   instance_class          = "db.t3.micro"
-  name                    = "wordpress-db"
   username                = "admin"
   password                = "2714abcde"  
   parameter_group_name    = "default.mysql8.0"
