@@ -121,7 +121,7 @@ resource "aws_db_instance" "wordpress_db" {
 
   # Networking
   vpc_security_group_ids  = [aws_security_group.web-security-group.id]
-  db_subnet_group_name    = aws_db_subnet_group.wordpress-db-subnet-group.name
+  db_subnet_group_name    = "wordpress-db-subnet-group"
   availability_zone       = "us-west-2a"
 
   # Storage
