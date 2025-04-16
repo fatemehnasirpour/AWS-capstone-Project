@@ -97,3 +97,38 @@ resource "aws_db_subnet_group" "wordpress_db_subnet_group" {
     Name = "wordpress-db-subnet-group"
   }
 }
+# Creating RDS MySQL
+resource "aws_db_instance" "wordpress_db" {
+  allocated_storage       = 20
+  engine                  = "mysql"
+  engine_version          = "8.0"
+  instance_class          = "db.t3.micro"
+  name                    = "wordpress"
+  username                = "admin"
+  password                = "2714abcde"  
+  parameter_group_name    = "default.mysql8.0"
+  skip_final_snapshot     = true  # true = don't take snapshot before deletion
+  publicly_accessible     = true
+
+  # Single AZ
+  multi_az                = false
+
+  # Disable automated backups
+  backup_retention_period = 0  # 0 disables backups
+
+  # Disable enhanced monitoring
+  monitoring_interval     = 0
+
+  # Networking
+  vpc_security_group_ids  = [aws_security_group.web-security-group.id]
+  db_subnet_group_name    = aws_db_subnet_group.wordpress-db-subnet-group.name
+  availability_zone       = "us-west-2a"
+
+  # Storage
+  storage_type            = "gp2"
+  storage_encrypted       = false
+
+  tags = {
+    Name = "wordpress-db"
+  }
+}
