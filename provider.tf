@@ -43,3 +43,31 @@ resource "aws_internet_gateway" "my-internet-gateway" {
     Name = "my-internet-gateway"
   }
 }
+
+# Creating security Group
+resource "aws_security_group" "web-security-group" {
+  name        = "web-sg"
+  description = "Allow SSH and HTTP"
+  vpc_id      = aws_vpc.wordpress-vpc.id
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "web-security-group"
+  }
+}
+
