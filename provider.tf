@@ -83,7 +83,7 @@ resource "aws_instance" "web_server" {
     aws_security_group.web-security-group.id
   ]
 
-  associate_public_ip_address = enable
+  associate_public_ip_address = true
 
   tags = {
     Name = "web-server"
