@@ -96,7 +96,7 @@ resource "aws_instance" "wordpress_server" {
   key_name      = "vockey"
   subnet_id     = aws_subnet.public_subnet.id
   vpc_security_group_ids = [
-    aws_security_group.web-security-group.id
+    aws_security_group.web-security-group.i
   ]
 
   user_data = <<-EOF
