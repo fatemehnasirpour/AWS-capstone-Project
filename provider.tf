@@ -83,22 +83,6 @@ resource "aws_instance" "web_server" {
   ]
 
   associate_public_ip_address = true
-
-  tags = {
-    Name = "web-server"
-  }
-}
-
-# Creating local Db & wordpress 
-resource "aws_instance" "wordpress_server" {
-  ami           = "ami-087f352c165340ea1"
-  instance_type = "t2.micro"
-  key_name      = "vockey"
-  subnet_id     = aws_subnet.public_subnet.id
-  vpc_security_group_ids = [
-    aws_security_group.web-security-group.id
-  ]
-
   user_data = <<-EOF
               #!/bin/bash
               apt update -y
@@ -129,6 +113,8 @@ resource "aws_instance" "wordpress_server" {
               EOF
 
   tags = {
-    Name = "wordpress-ec2-local-db"
+    Name = "web-server"
   }
 }
+
+
