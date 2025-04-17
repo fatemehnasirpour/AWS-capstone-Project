@@ -88,47 +88,47 @@ resource "aws_instance" "web_server" {
     Name = "web-server"
   }
 }
-# Creating Database Subnet Group
-resource "aws_db_subnet_group" "wordpress_db_subnet_group" {
-  name       = "wordpress-db-subnet-group"
-  subnet_ids = [aws_subnet.public_subnet.id]  
+
+# Creating local Db & wordpress 
+resource "aws_instance" "wordpress_server" {
+  ami           = "ami-087f352c165340ea1"
+  instance_type = "t2.micro"
+  key_name      = "vockey"
+  subnet_id     = aws_subnet.public_subnet.id
+  vpc_security_group_ids = [
+    aws_security_group.web-security-group.id
+  ]
+
+  user_data = <<-EOF
+              #!/bin/bash
+              apt update -y
+              apt install apache2 mysql-server php php-mysql libapache2-mod-php -y
+
+              # MySQL setup
+              mysql -e "CREATE DATABASE wordpress;"
+              mysql -e "CREATE USER 'main'@'localhost' IDENTIFIED BY 'lab-password';"
+              mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'main'@'localhost';"
+              mysql -e "FLUSH PRIVILEGES;"
+
+              # WordPress installation
+              cd /var/www/html
+              wget https://wordpress.org/latest.tar.gz
+              tar -xzf latest.tar.gz
+              cp -r wordpress/* .
+              chown -R www-data:www-data /var/www/html
+              chmod -R 755 /var/www/html
+              rm -rf wordpress latest.tar.gz
+
+              # WordPress configuration
+              cp wp-config-sample.php wp-config.php
+              sed -i "s/database_name_here/wordpress/" wp-config.php
+              sed -i "s/username_here/main/" wp-config.php
+              sed -i "s/password_here/lab-password/" wp-config.php
+
+              systemctl restart apache2
+              EOF
 
   tags = {
-    Name = "wordpress-db-subnet-group"
-  }
-}
-# Creating RDS MySQL
-resource "aws_db_instance" "wordpress_db" {
-  identifier              = "wordpress-db" 
-  allocated_storage       = 20
-  engine                  = "mysql"
-  engine_version          = "8.0"
-  instance_class          = "db.t3.micro"
-  username                = "admin"
-  password                = "2714abcde"  
-  parameter_group_name    = "default.mysql8.0"
-  skip_final_snapshot     = true  # true = don't take snapshot before deletion
-  publicly_accessible     = true
-
-  # Single AZ
-  multi_az                = false
-
-  # Disable automated backups
-  backup_retention_period = 0  # 0 disables backups
-
-  # Disable enhanced monitoring
-  monitoring_interval     = 0
-
-  # Networking
-  vpc_security_group_ids  = [aws_security_group.web-security-group.id]
-  db_subnet_group_name    = "wordpress-db-subnet-group"
-  availability_zone       = "us-west-2a" 
-
-  # Storage
-  storage_type            = "gp2"
-  storage_encrypted       = false
-
-  tags = {
-    Name = "wordpress-db"
+    Name = "wordpress-ec2-local-db"
   }
 }
