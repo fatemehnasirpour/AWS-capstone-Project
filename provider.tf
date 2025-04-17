@@ -44,6 +44,14 @@ resource "aws_internet_gateway" "my-internet-gateway" {
   }
 }
 
+#Creating route to acsess to internet
+resource "aws_route" "internet_access" {
+  route_table_id         = aws_route_table.custom-route-table.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.my-internet-gateway.id
+}
+
+
 # Creating security Group
 resource "aws_security_group" "web-security-group" {
   name        = "web-security-group"
@@ -67,7 +75,7 @@ resource "aws_security_group" "web-security-group" {
   }
 
   tags = {
-    Name = "web ssg"
+    Name = "web-security-group"
   }
 }
 
