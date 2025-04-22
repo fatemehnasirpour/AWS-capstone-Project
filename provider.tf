@@ -103,7 +103,6 @@ resource "aws_instance" "web_server" {
               dnf update -y
               dnf install -y httpd mariadb105-server php php-mysqli php-json php-fpm wget tar
 
-              # Start Apache and MariaDB
               systemctl enable httpd
               systemctl start httpd
               systemctl enable mariadb
@@ -124,14 +123,15 @@ resource "aws_instance" "web_server" {
               chmod -R 755 /var/www/html
               rm -rf wordpress latest.tar.gz
 
-              # WordPress configuration
+              # WordPress config
               cp wp-config-sample.php wp-config.php
               sed -i "s/database_name_here/wordpress/" wp-config.php
               sed -i "s/username_here/main/" wp-config.php
               sed -i "s/password_here/lab-password/" wp-config.php
 
               systemctl restart httpd
-            EOF
+EOF
+
 
 
   tags = {
