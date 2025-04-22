@@ -98,18 +98,27 @@ resource "aws_instance" "web_server" {
 
   associate_public_ip_address = true
 
- user_data = <<-EOF
+ resource "aws_instance" "wordpress_server" {
+  ami           = "ami-087f352c165340ea1"  # Amazon Linux 2 AMI (us-east-1)
+  instance_type = "t2.micro"  # Adjust based on your needs
+
+  # Security groups and key pair
+  security_groups = ["web-sg"]  # Replace with your security group
+  key_name        = "your-key-pair"  # Replace with your key pair name
+
+  # Provisioning using user_data (bash script)
+  user_data = <<-EOF
               #!/bin/bash
               exec > >(sudo tee /var/log/user-data.log) 2>&1  # log output for debugging
 
               # Update system and install necessary packages
               sudo yum update -y
 
-              # Add MariaDB repository (for Amazon Linux 2 / CentOS)
+              # Add MariaDB repository (for Amazon Linux 2)
               sudo curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
 
               # Install the packages
-              sudo yum install -y httpd mariadb php php-mysqlnd php-json php-fpm wget tar unzip
+              sudo yum install -y httpd mariadb-server php php-mysqlnd php-json php-fpm wget tar unzip
 
               # Start and enable services
               sudo systemctl enable --now httpd
@@ -147,6 +156,7 @@ resource "aws_instance" "web_server" {
               # Restart Apache
               sudo systemctl restart httpd
             EOF
+
 
 
   tags = {
