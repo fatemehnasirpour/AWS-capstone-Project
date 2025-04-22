@@ -1,25 +1,27 @@
 provider "aws" {
   region = "us-west-2"
 }
+
 # Creating VPC
 resource "aws_vpc" "wordpress-vpc" {
   cidr_block = "10.0.0.0/16"
 
-    tags = {
-      Name = "wordpress-vpc"
-    }
+  tags = {
+    Name = "wordpress-vpc"
+  }
 }
 
 # Creating Subnet
 resource "aws_subnet" "public_subnet" {
   vpc_id            = aws_vpc.wordpress-vpc.id
   cidr_block        = "10.0.1.0/24"
-  availability_zone = "us-west-2a" 
+  availability_zone = "us-west-2a"
 
   tags = {
     Name = "public-subnet"
   }
 }
+
 # Creating route table
 resource "aws_route_table" "custom-route-table" {
   vpc_id = aws_vpc.wordpress-vpc.id
@@ -44,13 +46,12 @@ resource "aws_internet_gateway" "my-internet-gateway" {
   }
 }
 
-#Creating route to acsess to internet
+# Creating route to access the internet
 resource "aws_route" "internet_access" {
   route_table_id         = aws_route_table.custom-route-table.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.my-internet-gateway.id
 }
-
 
 # Creating security Group
 resource "aws_security_group" "web-security-group" {
@@ -73,6 +74,7 @@ resource "aws_security_group" "web-security-group" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -85,26 +87,18 @@ resource "aws_security_group" "web-security-group" {
   }
 }
 
-# Creating EC2 Instanc
+# Creating EC2 Instance for the Web Server (WordPress)
 resource "aws_instance" "web_server" {
   ami           = "ami-087f352c165340ea1"  # Amazon Linux 2023 in us-west-2
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public_subnet.id
-  key_name      = "vockey"  
+  key_name      = "vockey"
 
   vpc_security_group_ids = [
     aws_security_group.web-security-group.id
   ]
 
   associate_public_ip_address = true
-
- resource "aws_instance" "wordpress_server" {
-  ami           = "ami-087f352c165340ea1"  # Amazon Linux 2 AMI (us-east-1)
-  instance_type = "t2.micro"  # Adjust based on your needs
-
-  # Security groups and key pair
-  security_groups = ["web-sg"]  # Replace with your security group
-  key_name        = "your-key-pair"  # Replace with your key pair name
 
   # Provisioning using user_data (bash script)
   user_data = <<-EOF
@@ -157,8 +151,7 @@ resource "aws_instance" "web_server" {
               sudo systemctl restart httpd
             EOF
 
-
   tags = {
-    Name = "web-server"
+    Name = "wordpress-server"
   }
 }
