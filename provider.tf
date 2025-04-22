@@ -100,13 +100,14 @@ resource "aws_instance" "web_server" {
 
   user_data = <<-EOF
               #!/bin/bash
-              apt update -y
-              apt install -y apache2 mysql-server php php-mysql wget tar
+              dnf update -y
+              dnf install -y httpd mariadb105-server php php-mysqli php-json php-fpm wget tar
 
-              systemctl enable apache2
-              systemctl start apache2
-              systemctl enable mysql
-              systemctl start mysql
+              # Start Apache and MariaDB
+              systemctl enable httpd
+              systemctl start httpd
+              systemctl enable mariadb
+              systemctl start mariadb
 
               # MySQL setup
               mysql -e "CREATE DATABASE wordpress;"
@@ -119,16 +120,17 @@ resource "aws_instance" "web_server" {
               wget https://wordpress.org/latest.tar.gz
               tar -xzf latest.tar.gz
               cp -r wordpress/* .
-              chown -R www-data:www-data /var/www/html
+              chown -R apache:apache /var/www/html
               chmod -R 755 /var/www/html
               rm -rf wordpress latest.tar.gz
 
+              # WordPress configuration
               cp wp-config-sample.php wp-config.php
               sed -i "s/database_name_here/wordpress/" wp-config.php
               sed -i "s/username_here/main/" wp-config.php
               sed -i "s/password_here/lab-password/" wp-config.php
 
-              systemctl restart apache2
+              systemctl restart httpd
             EOF
 
 
