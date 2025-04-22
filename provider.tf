@@ -98,37 +98,50 @@ resource "aws_instance" "web_server" {
 
   associate_public_ip_address = true
 
- user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y httpd mariadb-server php php-mysqlnd php-json php-fpm wget tar unzip
+user_data = <<-EOF
+#!/bin/bash
+exec > /var/log/user-data.log 2>&1  # log output for debugging
 
-              systemctl enable httpd
-              systemctl start httpd
-              systemctl enable mariadb
-              systemctl start mariadb
+yum update -y
+yum install -y httpd mariadb-server php php-mysqlnd php-json php-fpm wget tar unzip
 
-              mysql -e "CREATE DATABASE wordpress;"
-              mysql -e "CREATE USER 'main'@'localhost' IDENTIFIED BY 'lab-password';"
-              mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'main'@'localhost';"
-              mysql -e "FLUSH PRIVILEGES;"
+# Start and enable services
+systemctl enable --now httpd
+systemctl enable --now mariadb
 
-              cd /var/www/html
-              wget https://wordpress.org/latest.tar.gz
-              tar -xzf latest.tar.gz
-              cp -r wordpress/* .
-              rm -rf wordpress latest.tar.gz
+# Wait for MariaDB to be ready
+until mysqladmin ping &>/dev/null; do
+  echo "Waiting for MariaDB to be available..."
+  sleep 2
+done
 
-              chown -R apache:apache /var/www/html
-              chmod -R 755 /var/www/html
+# Configure MariaDB for WordPress
+mysql -e "CREATE DATABASE IF NOT EXISTS wordpress;"
+mysql -e "CREATE USER IF NOT EXISTS 'main'@'localhost' IDENTIFIED BY 'lab-password';"
+mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'main'@'localhost';"
+mysql -e "FLUSH PRIVILEGES;"
 
-              cp wp-config-sample.php wp-config.php
-              sed -i "s/database_name_here/wordpress/" wp-config.php
-              sed -i "s/username_here/main/" wp-config.php
-              sed -i "s/password_here/lab-password/" wp-config.php
+# Download and extract WordPress
+cd /tmp
+wget https://wordpress.org/latest.tar.gz
+tar -xzf latest.tar.gz
+cp -r wordpress/* /var/www/html/
+rm -rf wordpress latest.tar.gz
 
-              systemctl restart httpd
-              EOF
+# Set permissions
+chown -R apache:apache /var/www/html
+chmod -R 755 /var/www/html
+
+# Configure wp-config.php
+cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
+sed -i "s/database_name_here/wordpress/" /var/www/html/wp-config.php
+sed -i "s/username_here/main/" /var/www/html/wp-config.php
+sed -i "s/password_here/lab-password/" /var/www/html/wp-config.php
+
+# Restart Apache
+systemctl restart httpd
+EOF
+
 
   tags = {
     Name = "web-server"
