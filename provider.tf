@@ -99,7 +99,7 @@ resource "aws_instance" "web_server" {
   associate_public_ip_address = true
 
  #!/bin/bash
-exec > >(sudo tee /var/log/user-data.log) 2>&1  # log output for debugging
+   exec > >(sudo tee /var/log/user-data.log) 2>&1  # log output for debugging
 
 # Update system and install necessary packages
 sudo yum update -y
