@@ -98,49 +98,54 @@ resource "aws_instance" "web_server" {
 
   associate_public_ip_address = true
 
- user_data = <<-EOF
-              #!/bin/bash
-              exec > >(sudo tee /var/log/user-data.log) 2>&1  # log output for debugging
+ #!/bin/bash
+exec > >(sudo tee /var/log/user-data.log) 2>&1  # log output for debugging
 
-              sudo yum update -y
-              sudo yum install -y httpd mariadb-server php php-mysqlnd php-json php-fpm wget tar unzip
+# Update system and install necessary packages
+sudo yum update -y
 
-              # Start and enable services
-              sudo systemctl enable --now httpd
-              sudo systemctl enable --now mariadb
+# Add MariaDB repository (for Amazon Linux 2 / CentOS)
+sudo curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
 
-              # Wait for MariaDB to be ready
-              until mysqladmin ping &>/dev/null; do
-                echo "Waiting for MariaDB to be available..."
-                sleep 2
-              done
+# Install the packages
+sudo yum install -y httpd mariadb php php-mysqlnd php-json php-fpm wget tar unzip
 
-              # Configure MariaDB for WordPress
-              sudo mysql -e "CREATE DATABASE IF NOT EXISTS wordpress;"
-              sudo mysql -e "CREATE USER IF NOT EXISTS 'main'@'localhost' IDENTIFIED BY 'lab-password';"
-              sudo mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'main'@'localhost';"
-              sudo mysql -e "FLUSH PRIVILEGES;"
+# Start and enable services
+sudo systemctl enable --now httpd
+sudo systemctl enable --now mariadb
 
-              # Download and extract WordPress
-              cd /tmp
-              sudo wget https://wordpress.org/latest.tar.gz
-              sudo tar -xzf latest.tar.gz
-              sudo cp -r wordpress/* /var/www/html/
-              sudo rm -rf wordpress latest.tar.gz
+# Wait for MariaDB to be ready
+until mysqladmin ping &>/dev/null; do
+  echo "Waiting for MariaDB to be available..."
+  sleep 2
+done
 
-              # Set permissions
-              sudo chown -R apache:apache /var/www/html
-              sudo chmod -R 755 /var/www/html
+# Configure MariaDB for WordPress
+sudo mysql -e "CREATE DATABASE IF NOT EXISTS wordpress;"
+sudo mysql -e "CREATE USER IF NOT EXISTS 'main'@'localhost' IDENTIFIED BY 'lab-password';"
+sudo mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'main'@'localhost';"
+sudo mysql -e "FLUSH PRIVILEGES;"
 
-              # Configure wp-config.php
-              sudo cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
-              sudo sed -i "s/database_name_here/wordpress/" /var/www/html/wp-config.php
-              sudo sed -i "s/username_here/main/" /var/www/html/wp-config.php
-              sudo sed -i "s/password_here/lab-password/" /var/www/html/wp-config.php
+# Download and extract WordPress
+cd /tmp
+sudo wget https://wordpress.org/latest.tar.gz
+sudo tar -xzf latest.tar.gz
+sudo cp -r wordpress/* /var/www/html/
+sudo rm -rf wordpress latest.tar.gz
 
-              # Restart Apache
-              sudo systemctl restart httpd
-            EOF
+# Set permissions
+sudo chown -R apache:apache /var/www/html
+sudo chmod -R 755 /var/www/html
+
+# Configure wp-config.php
+sudo cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
+sudo sed -i "s/database_name_here/wordpress/" /var/www/html/wp-config.php
+sudo sed -i "s/username_here/main/" /var/www/html/wp-config.php
+sudo sed -i "s/password_here/lab-password/" /var/www/html/wp-config.php
+
+# Restart Apache
+sudo systemctl restart httpd
+
 
   tags = {
     Name = "web-server"
