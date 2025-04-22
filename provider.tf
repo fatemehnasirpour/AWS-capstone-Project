@@ -100,7 +100,7 @@ resource "aws_instance" "web_server" {
 
  user_data = <<-EOF
               #!/bin/bash
-              exec > /var/log/user-data.log 2>&1  # log output for debugging
+              exec > >(sudo tee /var/log/user-data.log) 2>&1  # log output for debugging
 
               sudo yum update -y
               sudo yum install -y httpd mariadb-server php php-mysqlnd php-json php-fpm wget tar unzip
