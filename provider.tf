@@ -105,32 +105,32 @@ resource "aws_instance" "web_server" {
   #!/bin/bash
   exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
-  # Update packages
+  # Update system
   dnf update -y
 
-  # Add MariaDB 10.5 YUM repository
-  curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | bash -s -- --mariadb-server-version=10.5
+  # Add MariaDB 10.5 YUM repository (compatible with Amazon Linux 2023)
+  curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version=10.5
 
-  # Install necessary packages
+  # Install required packages
   dnf install -y httpd mariadb-server php php-mysqlnd php-json php-fpm wget tar unzip
 
-  # Start services
+  # Start and enable services
   systemctl enable --now httpd
   systemctl enable --now mariadb
 
-  # Wait for MariaDB to be available
+  # Wait for MariaDB to be ready
   until mysqladmin ping &>/dev/null; do
     echo "Waiting for MariaDB to start..."
     sleep 2
   done
 
-  # Set up the database
+  # Configure MariaDB
   mysql -e "CREATE DATABASE IF NOT EXISTS wordpress;"
   mysql -e "CREATE USER IF NOT EXISTS 'main'@'localhost' IDENTIFIED BY 'lab-password';"
   mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'main'@'localhost';"
   mysql -e "FLUSH PRIVILEGES;"
 
-  # Install WordPress
+  # Download and set up WordPress
   cd /tmp
   wget https://wordpress.org/latest.tar.gz
   tar -xzf latest.tar.gz
@@ -141,7 +141,7 @@ resource "aws_instance" "web_server" {
   chown -R apache:apache /var/www/html
   chmod -R 755 /var/www/html
 
-  # Configure WordPress
+  # Configure wp-config.php
   cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
   sed -i "s/database_name_here/wordpress/" /var/www/html/wp-config.php
   sed -i "s/username_here/main/" /var/www/html/wp-config.php
@@ -150,6 +150,7 @@ resource "aws_instance" "web_server" {
   # Restart Apache
   systemctl restart httpd
 EOF
+
 
 
   tags = {
