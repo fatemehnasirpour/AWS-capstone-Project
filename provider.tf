@@ -98,24 +98,22 @@ resource "aws_instance" "web_server" {
 
   associate_public_ip_address = true
 
-  user_data = <<-EOF
+ user_data = <<-EOF
               #!/bin/bash
               dnf update -y
-              dnf install -y httpd mariadb105-server php php-mysqli php-json php-fpm wget tar
+              dnf install -y httpd php php-mysqlnd mariadb105-server wget tar
 
-              # Start Apache and MariaDB
               systemctl enable httpd
               systemctl start httpd
+
               systemctl enable mariadb
               systemctl start mariadb
 
-              # MySQL setup
               mysql -e "CREATE DATABASE wordpress;"
               mysql -e "CREATE USER 'main'@'localhost' IDENTIFIED BY 'lab-password';"
               mysql -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'main'@'localhost';"
               mysql -e "FLUSH PRIVILEGES;"
 
-              # WordPress installation
               cd /var/www/html
               wget https://wordpress.org/latest.tar.gz
               tar -xzf latest.tar.gz
@@ -124,14 +122,14 @@ resource "aws_instance" "web_server" {
               chmod -R 755 /var/www/html
               rm -rf wordpress latest.tar.gz
 
-              # WordPress configuration
               cp wp-config-sample.php wp-config.php
-              sed -i "s/database_name_here/wordpress/" wp-config.php
-              sed -i "s/username_here/main/" wp-config.php
-              sed -i "s/password_here/lab-password/" wp-config.php
+              sed -i 's/database_name_here/wordpress/' wp-config.php
+              sed -i 's/username_here/main/' wp-config.php
+              sed -i 's/password_here/lab-password/' wp-config.php
 
               systemctl restart httpd
             EOF
+
 
 
 
