@@ -100,12 +100,11 @@ resource "aws_instance" "web_server" {
 
  user_data = <<-EOF
               #!/bin/bash
-              dnf update -y
-              dnf install -y httpd php php-mysqlnd mariadb105-server wget tar
+              yum update -y
+              yum install -y httpd mariadb-server php php-mysqlnd php-json php-fpm wget tar unzip
 
               systemctl enable httpd
               systemctl start httpd
-
               systemctl enable mariadb
               systemctl start mariadb
 
@@ -118,20 +117,18 @@ resource "aws_instance" "web_server" {
               wget https://wordpress.org/latest.tar.gz
               tar -xzf latest.tar.gz
               cp -r wordpress/* .
-              chown -R apache:apache /var/www/html
-              chmod -R 755 /var/www/html
               rm -rf wordpress latest.tar.gz
 
+              chown -R apache:apache /var/www/html
+              chmod -R 755 /var/www/html
+
               cp wp-config-sample.php wp-config.php
-              sed -i 's/database_name_here/wordpress/' wp-config.php
-              sed -i 's/username_here/main/' wp-config.php
-              sed -i 's/password_here/lab-password/' wp-config.php
+              sed -i "s/database_name_here/wordpress/" wp-config.php
+              sed -i "s/username_here/main/" wp-config.php
+              sed -i "s/password_here/lab-password/" wp-config.php
 
               systemctl restart httpd
-            EOF
-
-
-
+              EOF
 
   tags = {
     Name = "web-server"
