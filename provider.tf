@@ -11,7 +11,7 @@ resource "aws_vpc" "wordpress-vpc" {
   }
 }
 
-# Creating Public Subnet in us-west-2a
+# Creating Public Subnets in two AZs
 resource "aws_subnet" "public_subnet_1" {
   vpc_id            = aws_vpc.wordpress-vpc.id
   cidr_block        = "10.0.10.0/24"
@@ -22,7 +22,6 @@ resource "aws_subnet" "public_subnet_1" {
   }
 }
 
-# Creating Public Subnet in us-west-2b
 resource "aws_subnet" "public_subnet_2" {
   vpc_id            = aws_vpc.wordpress-vpc.id
   cidr_block        = "10.0.20.0/24"
@@ -42,7 +41,7 @@ resource "aws_route_table" "custom-route-table" {
   }
 }
 
-# Subnet Association with Route Table
+# Subnet Associations
 resource "aws_route_table_association" "public_assoc_1" {
   subnet_id      = aws_subnet.public_subnet_1.id
   route_table_id = aws_route_table.custom-route-table.id
@@ -53,7 +52,7 @@ resource "aws_route_table_association" "public_assoc_2" {
   route_table_id = aws_route_table.custom-route-table.id
 }
 
-# Creating Internet Gateway and attach to VPC
+# Internet Gateway
 resource "aws_internet_gateway" "my-internet-gateway" {
   vpc_id = aws_vpc.wordpress-vpc.id
 
@@ -62,14 +61,14 @@ resource "aws_internet_gateway" "my-internet-gateway" {
   }
 }
 
-# Creating Route to Access the Internet
+# Internet Route
 resource "aws_route" "internet_access" {
   route_table_id         = aws_route_table.custom-route-table.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.my-internet-gateway.id
 }
 
-# Creating Security Group
+# Web Security Group
 resource "aws_security_group" "web-security-group" {
   name        = "web-security-group"
   description = "Allow SSH and HTTP"
@@ -103,9 +102,9 @@ resource "aws_security_group" "web-security-group" {
   }
 }
 
-# Creating EC2 Instance for the Web Server (WordPress)
+# Web Server Instance
 resource "aws_instance" "web_server" {
-  ami           = "ami-087f352c165340ea1"  # Amazon Linux 2023 in us-west-2
+  ami           = "ami-087f352c165340ea1"
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public_subnet_1.id
   key_name      = "vockey"
@@ -116,7 +115,6 @@ resource "aws_instance" "web_server" {
 
   associate_public_ip_address = true
 
-  # Provisioning using user_data (bash script)
   user_data = <<-EOF
     #!/bin/bash
     exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1
@@ -152,9 +150,9 @@ resource "aws_instance" "web_server" {
   }
 }
 
-# Creating EC2 Instance for CLI Host in Public Subnet 2
+# CLI Host Instance
 resource "aws_instance" "cli_host" {
-  ami           = "ami-087f352c165340ea1"  # Amazon Linux 2023 in us-west-2
+  ami           = "ami-087f352c165340ea1"
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public_subnet_2.id
   key_name      = "vockey"
@@ -169,7 +167,8 @@ resource "aws_instance" "cli_host" {
     Name = "cli-host"
   }
 }
-# Creating Private Subnet in us-west-2a
+
+# Private Subnets
 resource "aws_subnet" "private_subnet_1" {
   vpc_id            = aws_vpc.wordpress-vpc.id
   cidr_block        = "10.0.30.0/24"
@@ -180,7 +179,6 @@ resource "aws_subnet" "private_subnet_1" {
   }
 }
 
-# Creating Private Subnet in us-west-2b
 resource "aws_subnet" "private_subnet_2" {
   vpc_id            = aws_vpc.wordpress-vpc.id
   cidr_block        = "10.0.40.0/24"
@@ -191,7 +189,7 @@ resource "aws_subnet" "private_subnet_2" {
   }
 }
 
-# Create a security group for ALB
+# ALB Security Group
 resource "aws_security_group" "alb_sg" {
   name        = "alb-security-group"
   description = "Allow HTTP inbound traffic"
@@ -216,51 +214,52 @@ resource "aws_security_group" "alb_sg" {
   }
 }
 
-# Create the ALB
+# Application Load Balancer
 resource "aws_lb" "app_alb" {
-  name               = "wordpress-alb"
+  name               = "app-load-balancer"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [aws_subnet.public_subnet.id] # Add multiple subnets for HA if needed
+  subnets            = [
+    aws_subnet.public_subnet_1.id,
+    aws_subnet.public_subnet_2.id
+  ]
 
   tags = {
-    Name = "wordpress-alb"
+    Name = "app-alb"
   }
 }
 
-# Create the Target Group
-resource "aws_lb_target_group" "wordpress_tg" {
-  name     = "wordpress-tg"
+# Target Group
+resource "aws_lb_target_group" "app_tg" {
+  name     = "app-target-group"
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.wordpress-vpc.id
 
   health_check {
     path                = "/"
-    protocol            = "HTTP"
     interval            = 30
     timeout             = 5
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
-  }
-
-  tags = {
-    Name = "wordpress-target-group"
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    matcher             = "200"
   }
 }
 
-# Create Listener for ALB
-resource "aws_lb_listener" "alb_listener" {
+# Listener
+resource "aws_lb_listener" "app_listener" {
   load_balancer_arn = aws_lb.app_alb.arn
   port              = 80
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.wordpress_tg.arn
+    target_group_arn = aws_lb_target_group.app_tg.arn
   }
 }
+
+
 
 
 
