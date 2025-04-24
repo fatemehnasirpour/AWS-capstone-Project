@@ -105,7 +105,7 @@ resource "aws_security_group" "web-security-group" {
 
 # Creating EC2 Instance for the Web Server (WordPress)
 resource "aws_instance" "web_server" {
-  ami           = "ami-087f352c165340ea1"  # Amazon Linux 2023 in us-west-2
+  ami           = "ami-087f352c165340ea1"
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public_subnet_1.id
   key_name      = "vockey"
@@ -302,6 +302,62 @@ resource "aws_autoscaling_group" "wordpress_asg" {
     key                 = "Name"
     value               = "wordpress-asg"
     propagate_at_launch = true
+  }
+}
+
+# RDS: DB Subnet Group
+resource "aws_db_subnet_group" "wordpress_db_subnet_group" {
+  name       = "wordpress-db-subnet-group"
+  subnet_ids = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
+
+  tags = {
+    Name = "wordpress-db-subnet-group"
+  }
+}
+
+# RDS Security Group
+resource "aws_security_group" "rds_sg" {
+  name        = "rds-security-group"
+  description = "Allow MySQL access"
+  vpc_id      = aws_vpc.wordpress-vpc.id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    security_groups = [aws_security_group.web-security-group.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "rds-sg"
+  }
+}
+
+# RDS Instance
+resource "aws_db_instance" "wordpress_db" {
+  identifier              = "wordpress-db"
+  engine                  = "mysql"
+  engine_version          = "8.0"
+  instance_class          = "db.t3.micro"
+  allocated_storage       = 20
+  username                = "admin"
+  password                = "lab-password"
+  db_name                 = "wordpress"
+  db_subnet_group_name    = aws_db_subnet_group.wordpress_db_subnet_group.name
+  vpc_security_group_ids  = [aws_security_group.rds_sg.id]
+  skip_final_snapshot     = true
+  multi_az                = true
+  publicly_accessible     = false
+
+  tags = {
+    Name = "wordpress-db"
   }
 }
 
