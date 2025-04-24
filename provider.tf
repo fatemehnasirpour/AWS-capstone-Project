@@ -190,10 +190,6 @@ resource "aws_subnet" "private_subnet_2" {
     Name = "private-subnet-2"
   }
 }
-# Define the provider
-provider "aws" {
-  region = "us-west-2"
-}
 
 # Create a security group for ALB
 resource "aws_security_group" "alb_sg" {
