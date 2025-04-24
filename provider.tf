@@ -360,9 +360,6 @@ resource "aws_db_instance" "wordpress_db" {
     Name = "wordpress-db"
   }
 }
-provider "aws" {
-  region = "us-west-2"
-}
 
 # [Your existing resources... (VPC, Subnets, EC2 instances, RDS, etc.)]
 
