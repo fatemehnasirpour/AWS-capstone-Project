@@ -241,14 +241,9 @@ resource "aws_launch_template" "wordpress_template" {
 
   vpc_security_group_ids = [aws_security_group.web-security-group.id]
 
-  user_data = base64encode(<<-EOF
-    #!/bin/bash
-    yum update -y
-    yum install -y httpd
-    systemctl start httpd
-    systemctl enable httpd
-  EOF
-  )
+   # Reference the user_data script from the file
+  user_data = base64encode(file("${path.module}/wordpress_userdata.sh"))
+
 
   tag_specifications {
     resource_type = "instance"
