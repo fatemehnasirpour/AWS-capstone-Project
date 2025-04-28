@@ -14,7 +14,7 @@ resource "aws_vpc" "wordpress-vpc" {
 # Creating Public Subnet in us-west-2a
 resource "aws_subnet" "public_subnet_1" {
   vpc_id            = aws_vpc.wordpress-vpc.id
-  cidr_block        = "10.0.10.0/24"
+  cidr_block        = "10.0.0.0/24"
   availability_zone = "us-west-2a"
 
   tags = {
@@ -25,7 +25,7 @@ resource "aws_subnet" "public_subnet_1" {
 # Creating Public Subnet in us-west-2b
 resource "aws_subnet" "public_subnet_2" {
   vpc_id            = aws_vpc.wordpress-vpc.id
-  cidr_block        = "10.0.20.0/24"
+  cidr_block        = "10.0.1.0/24"
   availability_zone = "us-west-2b"
 
   tags = {
@@ -172,7 +172,7 @@ resource "aws_instance" "cli_host" {
 # Creating Private Subnet in us-west-2a
 resource "aws_subnet" "private_subnet_1" {
   vpc_id            = aws_vpc.wordpress-vpc.id
-  cidr_block        = "10.0.30.0/24"
+  cidr_block        = "10.0.2.0/24"
   availability_zone = "us-west-2a"
 
   tags = {
@@ -183,7 +183,7 @@ resource "aws_subnet" "private_subnet_1" {
 # Creating Private Subnet in us-west-2b
 resource "aws_subnet" "private_subnet_2" {
   vpc_id            = aws_vpc.wordpress-vpc.id
-  cidr_block        = "10.0.40.0/24"
+  cidr_block        = "10.0.3.0/24"
   availability_zone = "us-west-2b"
 
   tags = {
