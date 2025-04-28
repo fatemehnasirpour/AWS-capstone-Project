@@ -241,9 +241,10 @@ resource "aws_launch_template" "wordpress_template" {
 
   vpc_security_group_ids = [aws_security_group.web-security-group.id]
 
-   # Reference the user_data script from the file
-  user_data = base64encode(file("${path.module}/wordpress_userdata.sh"))
-
+  # Use a dynamic variable in user_data to pass the RDS endpoint
+  user_data = base64encode(templatefile("${path.module}/userdata/wordpress_userdata.sh", {
+    rds_endpoint = aws_db_instance.wordpress_db.endpoint
+  }))
 
   tag_specifications {
     resource_type = "instance"
@@ -253,6 +254,7 @@ resource "aws_launch_template" "wordpress_template" {
     }
   }
 }
+
 
 # Auto Scaling Group
 resource "aws_autoscaling_group" "wordpress_asg" {
@@ -315,7 +317,7 @@ resource "aws_db_instance" "wordpress_db" {
   engine_version          = "8.0"
   instance_class          = "db.t3.micro"
   allocated_storage       = 20
-  username                = "admin"
+  username                = "main"
   password                = "lab-password"
   db_name                 = "wordpress"
   db_subnet_group_name    = aws_db_subnet_group.wordpress_db_subnet_group.name
@@ -327,6 +329,9 @@ resource "aws_db_instance" "wordpress_db" {
   tags = {
     Name = "wordpress-db"
   }
+}
+output "rds_endpoint" {
+  value = aws_db_instance.wordpress_db.endpoint
 }
 
 
