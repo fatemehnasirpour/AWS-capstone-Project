@@ -21,7 +21,7 @@ resource "aws_lb_target_group" "wordpress_tg" {
   vpc_id   = aws_vpc.wordpress-vpc.id
 
   health_check {
-    path                = "/wp-login.php"
+    path                = "/"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
