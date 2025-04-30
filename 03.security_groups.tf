@@ -50,7 +50,7 @@ resource "aws_security_group" "alb_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    security_groups = [aws_security_group.ec2_sg.id] # Replace with your EC2 SG
+    security_groups =  [aws_security_group.web-security-group.id] 
   }
 
 
