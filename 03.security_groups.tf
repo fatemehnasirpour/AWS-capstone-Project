@@ -33,11 +33,12 @@ resource "aws_security_group" "web-security-group" {
 }
 # Create a security group for ALB
 resource "aws_security_group" "alb_sg" {
-  name        = "alb-security-group"
-  description = "Allow HTTP inbound traffic"
-  vpc_id      = aws_vpc.wordpress-vpc.id
+  name        = "alb-sg"
+  description = "Allow inbound HTTP and outbound to EC2"
+  vpc_id      = aws_vpc.wordpress_vpc.id
 
   ingress {
+    description = "Allow HTTP from anywhere"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -45,11 +46,13 @@ resource "aws_security_group" "alb_sg" {
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow outbound HTTP to EC2 SG"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    security_groups = [aws_security_group.ec2_sg.id] # Replace with your EC2 SG
   }
+
 
   tags = {
     Name = "alb-sg"
