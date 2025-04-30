@@ -70,6 +70,7 @@ user_data = base64encode(templatefile("${path.module}/userdata/wordpress_userdat
 
 # Auto Scaling Group
 resource "aws_autoscaling_group" "wordpress_asg" {
+  depends_on = [aws_db_instance.wordpress_db]
   desired_capacity     = 2
   max_size             = 3
   min_size             = 1
