@@ -35,7 +35,7 @@ resource "aws_security_group" "web-security-group" {
 resource "aws_security_group" "alb_sg" {
   name        = "alb-sg"
   description = "Allow inbound HTTP and outbound to EC2"
-  vpc_id      = aws_vpc.wordpress_vpc.id
+  vpc_id      = aws_vpc.wordpress-vpc.id
 
   ingress {
     description = "Allow HTTP from anywhere"

@@ -18,7 +18,7 @@ resource "aws_lb_target_group" "wordpress_tg" {
   name     = "wordpress-tg"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = aws_vpc.wordpress_vpc.id  
+  vpc_id   = aws_vpc.wordpress-vpc.id 
   health_check {
     path                = "/"          
     protocol            = "HTTP"       
