@@ -33,7 +33,7 @@ resource "aws_security_group" "web-security-group" {
 }
 # Create a security group for ALB
 resource "aws_security_group" "alb_sg" {
-  name        = "alb-sg"
+  name        = "alb-security-group"
   description = "Allow inbound HTTP and outbound to EC2"
   vpc_id      = aws_vpc.wordpress-vpc.id
 
