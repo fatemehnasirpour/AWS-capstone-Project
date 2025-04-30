@@ -56,7 +56,7 @@ resource "aws_security_group" "alb_sg" {
 
 
   tags = {
-    Name = "alb-security-group"
+    Name = "alb-sg"
   }
 }
 # RDS: DB Subnet Group
