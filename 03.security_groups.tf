@@ -59,15 +59,6 @@ resource "aws_security_group" "alb_sg" {
     Name = "alb-sg"
   }
 }
-# RDS: DB Subnet Group
-resource "aws_db_subnet_group" "wordpress_db_subnet_group_security" {
-  name       = "wordpress-db-subnet-group-new"
-  subnet_ids = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-
-  tags = {
-    Name = "wordpress-db-subnet-group"
-  }
-}
 
 # RDS Security Group
 resource "aws_security_group" "rds_sg" {
