@@ -9,7 +9,7 @@ resource "aws_db_subnet_group" "wordpress_db_subnet_group" {
 }
 
 # RDS Instance
-resource "aws_db_instance" "wordpress_db" {
+resource "aws_db_instance" "wordpress" {
   identifier              = "wordpress-db"
   engine                  = "mysql"
   engine_version          = "8.0"
