@@ -24,7 +24,8 @@ DBName="wordpress"
 DBUser="wordpressuser"
 DBPassword="password3141!"
 DBRootPassword="rootpassword3141!"
-DBHost=$(echo "${rds_endpoint}" | sed 's/:3306//')
+DBHost="${rds_endpoint}"
+
 
 # Start Apache server and enable it on system startup
 sudo systemctl start httpd
