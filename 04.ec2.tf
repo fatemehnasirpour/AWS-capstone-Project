@@ -12,7 +12,8 @@ resource "aws_instance" "web_server" {
   associate_public_ip_address = true
 
  
-user_data = file("${path.module}/userdata/wordpress_userdata.sh")
+user_data = file("${path.module}/wordpress_userdata.sh")
+
 
 
   tags = {

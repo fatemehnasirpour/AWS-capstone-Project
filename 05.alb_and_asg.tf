@@ -54,7 +54,8 @@ resource "aws_launch_template" "wordpress_template" {
 
   # Use a dynamic variable in user_data to pass the RDS endpoint
 user_data = templatefile("${path.module}/user_data.sh", {
-  rds_endpoint = aws_db_instance.wordpress.endpoint
+  rds_endpoint = rds_endpoint = aws_db_instance.wordpress_db.endpoint
+
 })
 
 
