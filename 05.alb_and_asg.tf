@@ -20,7 +20,7 @@ resource "aws_lb_target_group" "wordpress_tg" {
   protocol = "HTTP"
   vpc_id   = aws_vpc.wordpress-vpc.id 
   health_check {
-    path                = "/"          
+    path                = "/index.php"          
     protocol            = "HTTP"       
     interval            = 30
     timeout             = 5

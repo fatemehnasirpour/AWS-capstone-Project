@@ -7,7 +7,7 @@ systemctl enable --now httpd
 systemctl enable --now mariadb
 until mysqladmin ping &>/dev/null; do
   echo "Waiting for MariaDB to start..."
-  sleep 2
+  sleep 10
 done
 mysql -e "CREATE DATABASE IF NOT EXISTS wordpress;"
 mysql -e "CREATE USER IF NOT EXISTS 'main'@'localhost' IDENTIFIED BY 'lab-password';"
