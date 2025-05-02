@@ -11,6 +11,8 @@ sudo amazon-linux-extras install -y php8.0
 sudo amazon-linux-extras enable mariadb10.5
 sudo yum clean metadata
 sudo yum install -y mariadb unzip
+sudo yum install -y php-mysqlnd php-fpm
+
 
 # Set database variables for local testing
 # DBName="wordpress"
@@ -24,7 +26,7 @@ DBName="wordpress"
 DBUser="wordpressuser"
 DBPassword="password3141!"
 DBRootPassword="rootpassword3141!"
-DBHost=$(echo "${rds_endpoint}" | sed 's/:3306//')
+DBHost="${rds_endpoint%:3306}"
 
 # Start Apache server and enable it on system startup
 sudo systemctl start httpd
