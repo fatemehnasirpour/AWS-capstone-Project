@@ -28,7 +28,7 @@ resource "aws_lb_target_group" "wordpress_tg" {
 resource "aws_lb_target_group_attachment" "wordpress-tg_attachment" {
   target_group_arn = aws_lb_target_group.wordpress_tg.arn
   
-  target_id        = aws_instance.wordpress_instance.id
+  target_id        = aws_instance.web_server.id
   port             = 80
 }
 resource "aws_lb_listener" "wordpress_listener" {
