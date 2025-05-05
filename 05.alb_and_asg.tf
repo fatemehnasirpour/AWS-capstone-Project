@@ -58,7 +58,7 @@ resource "aws_launch_template" "wordpress_template" {
   #rds_endpoint = aws_db_instance.wordpress_db.endpoint
 #}))
 
-  user_data = base64encode(data.template_file.userdataEC.rendered)
+  user_data = base64encode(data.template_file.userdata.rendered)
 
   tag_specifications {
     resource_type = "instance"
