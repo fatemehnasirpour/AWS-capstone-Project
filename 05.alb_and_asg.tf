@@ -51,6 +51,9 @@ resource "aws_launch_template" "wordpress_template" {
   key_name      = "vockey"
 
   vpc_security_group_ids = [aws_security_group.web-security-group.id]
+  network_interfaces {
+    associate_public_ip_address = true
+  }
 
   # Use a dynamic variable in user_data to pass the RDS endpoint
  #user_data = base64encode(templatefile("${path.module}/user_data.sh", {
