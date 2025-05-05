@@ -60,6 +60,7 @@ resource "aws_launch_template" "wordpress_template" {
 
   user_data = base64encode(data.template_file.userdata.rendered)
 
+
   tag_specifications {
     resource_type = "instance"
 
@@ -92,5 +93,11 @@ resource "aws_autoscaling_group" "wordpress_asg" {
 }
 
 data "template_file" "userdata" {
-  template = file("user_data.sh")
-} 
+  template = file("${path.module}/user_data.sh")
+  vars = {
+    db_name      = aws_db_instance.wordpress_db.db_name
+    db_user      = aws_db_instance.wordpress_db.username
+    db_password  = aws_db_instance.wordpress_db.password
+    rds_endpoint = aws_db_instance.wordpress_db.endpoint
+  }
+}
