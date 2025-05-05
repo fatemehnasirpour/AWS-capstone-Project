@@ -19,7 +19,7 @@ resource "aws_lb_target_group" "wordpress_tg" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.wordpress-vpc.id 
- /* health_check {
+ health_check {
     path                = "/index.php"          
     protocol            = "HTTP"       
     interval            = 30
@@ -27,7 +27,7 @@ resource "aws_lb_target_group" "wordpress_tg" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     matcher             = "200-399"   
-  }*/
+  }
 
   target_type = "instance"            
 
@@ -59,6 +59,9 @@ resource "aws_launch_template" "wordpress_template" {
  #user_data = base64encode(templatefile("${path.module}/user_data.sh", {
   #rds_endpoint = aws_db_instance.wordpress_db.endpoint
 #}))
+
+  user_data = file("${path.module}/user_data.sh")
+
   tag_specifications {
     resource_type = "instance"
 
