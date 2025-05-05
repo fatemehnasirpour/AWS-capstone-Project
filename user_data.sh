@@ -1,56 +1,37 @@
-#! /bin/bash
-# # Install updates
-sudo yum update -y
-sudo yum install -y stress-ng
+#!/bin/bash
+# Install updates and tools
+yum update -y
+yum install -y stress-ng httpd mysql wget
 
-#Install httpd
-sudo yum install -y httpd
-sudo systemctl start httpd
-sudo systemctl enable httpd
+# Start and enable Apache
+systemctl start httpd
+systemctl enable httpd
 
-#Install mysql
-sudo yum install -y mysql
+# Enable PHP 7.4
+amazon-linux-extras enable php7.4
+yum clean metadata
+yum install -y php php-cli php-pdo php-fpm php-json php-mysqlnd
 
-#Install PHP
-sudo yum install -y php 
-sudo amazon-linux-extras install 
+# Set MySQL root password
+mysqladmin -u root password 'rootpassword'
 
-
-# Update all installed 
-sudo yum update -y
-
-#Restart Apache
-sudo systemctl restart httpd
-
-#Install Wordpress
-DBRootPassword='rootpassword'
-mysqladmin -u root password $DBRootPassword
-
-sudo yum install -y wget
-sudo wget http://wordpress.org/latest.tar.gz -P /var/www/html/
-
+# Download and setup WordPress
+wget http://wordpress.org/latest.tar.gz -P /var/www/html/
 cd /var/www/html
-sudo tar -zxvf latest.tar.gz
-sudo cp -rvf wordpress/* .
+tar -zxvf latest.tar.gz
+cp -rvf wordpress/* .
+rm -R wordpress latest.tar.gz
 
-sudo rm -R wordpress
-sudo rm latest.tar.gz
+# Set WordPress config
+cp wp-config-sample.php wp-config.php
+sed -i "s/'database_name_here'/'${db_name}'/g" wp-config.php
+sed -i "s/'username_here'/'${db_user}'/g" wp-config.php
+sed -i "s/'password_here'/'${db_password}'/g" wp-config.php
+sed -i "s/'localhost'/'${rds_endpoint}'/g" wp-config.php
 
-echo "Terraform output:"
-
-# Copy wp-config.php file to wordpress directory
-sudo cp ./wp-config-sample.php ./wp-config.php
-sudo sed -i "s/'database_name_here'/'$DBName'/g" wp-config.php
-sudo sed -i "s/'username_here'/'$DBUser'/g" wp-config.php
-sudo sed -i "s/'password_here'/'$DBPassword'/g" wp-config.php
-sudo sed -i "s/'localhost'/'$RDS_ENDPOINT'/g" wp-config.php
-
-sudo mysql -h "$RDS_ENDPOINT" -u "$DBUser" -p"$DBPassword" "$DBName" -e "SHOW DATABASES;"
-
-#Install PHP Extensions
-sudo amazon-linux-extras enable php7.4
-sudo yum clean metadata
-sudo yum install -y php-cli php-pdo php-fpm php-json php-mysqlnd
+# Test DB connection
+mysql -h "${rds_endpoint}" -u "${db_user}" -p"${db_password}" "${db_name}" -e "SHOW DATABASES;"
 
 # Restart Apache
-sudo systemctl restart httpd
+systemctl restart httpd
+

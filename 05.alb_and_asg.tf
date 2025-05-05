@@ -48,9 +48,9 @@ resource "aws_launch_template" "wordpress_template" {
   instance_type = "t2.micro"
   key_name      = "vockey"
 
-  vpc_security_group_ids = [aws_security_group.web-security-group.id]
   network_interfaces {
     associate_public_ip_address = true
+    security_groups             = [aws_security_group.web-security-group.id]
   }
 
   # Use a dynamic variable in user_data to pass the RDS endpoint
