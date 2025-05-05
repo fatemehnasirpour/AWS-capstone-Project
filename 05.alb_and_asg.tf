@@ -91,6 +91,6 @@ resource "aws_autoscaling_group" "wordpress_asg" {
   }
 }
 
-data "template_file" "userdataEC" {
+data "template_file" "userdata" {
   template = file("user_data.sh")
 } 
