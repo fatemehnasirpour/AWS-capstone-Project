@@ -53,14 +53,9 @@ resource "aws_launch_template" "wordpress_template" {
   vpc_security_group_ids = [aws_security_group.web-security-group.id]
 
   # Use a dynamic variable in user_data to pass the RDS endpoint
-user_data = base64encode(templatefile("${path.module}/user_data.sh", {
-  rds_endpoint = aws_db_instance.wordpress_db.endpoint
-}))
-
-
-
-  
-
+ #user_data = base64encode(templatefile("${path.module}/user_data.sh", {
+  #rds_endpoint = aws_db_instance.wordpress_db.endpoint
+#}))
   tag_specifications {
     resource_type = "instance"
 
