@@ -59,7 +59,8 @@ AWS-capstone-Project/
 
 ## 📊 Architecture Diagram
 
-*Include an architecture diagram here to visualize the infrastructure setup.*
+![My Diagram](diagram.png)
+
 
 ## 🛠️ Prerequisites
 
