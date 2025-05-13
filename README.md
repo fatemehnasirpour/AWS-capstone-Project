@@ -26,8 +26,8 @@ This project automates the deployment of a highly available and scalable WordPre
 ## 🗂️ Project Structure
 
 
-```plaintext
 AWS-capstone-Project/
+
 ├── 00.main.tf
 ├── 01.provider.tf
 ├── 02.vpc.tf
@@ -59,8 +59,7 @@ AWS-capstone-Project/
 
 ## 📊 Architecture Diagram
 
-![My Diagram](diagram.png)
-
+*Include an architecture diagram here to visualize the infrastructure setup.*
 
 ## 🛠️ Prerequisites
 
