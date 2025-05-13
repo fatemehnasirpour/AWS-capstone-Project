@@ -24,6 +24,7 @@ This project automates the deployment of a highly available and scalable WordPre
 - **Git**: Version control system.
 
 ## 🗂️ Project Structure
+
 ├── 00.main.tf
 ├── 01.provider.tf
 ├── 02.vpc.tf
@@ -35,6 +36,7 @@ This project automates the deployment of a highly available and scalable WordPre
 │ └── wordpress.sh
 ├── .gitignore
 └── README.md
+
 - **00.main.tf**: Main Terraform configuration file.
 - **01.provider.tf**: Specifies the AWS provider.
 - **02.vpc.tf**: Defines the VPC, subnets, and networking components.
@@ -73,16 +75,26 @@ This project automates the deployment of a highly available and scalable WordPre
    cd AWS-capstone-Project
 
 2. **Configure AWS credentials**:
+
+```bash
 aws configure
 
 3. **Initialize Terraform**:
+
+```bash
 terraform init
 
 4. **Plan the Deployment**:
+
+```bash
 terraform plan
 
 4. **Apply the Configuration**:
+
+```bash
 terraform apply
 
 **Destroy the Infrastructure**
+
+```bash
 terraform destroy
