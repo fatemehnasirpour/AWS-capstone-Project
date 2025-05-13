@@ -59,9 +59,7 @@ AWS-capstone-Project/
 
 ## 📊 Architecture Diagram
 
-*Include an architecture diagram here to visualize the infrastructure setup.*
 ![My Diagram](diagram.png)
-
 
 
 ## 🛠️ Prerequisites
@@ -74,29 +72,6 @@ AWS-capstone-Project/
 
 1. **Clone the repository**:
 
-   
-bash
+   ```bash
    git clone https://github.com/fatemehnasirpour/AWS-capstone-Project.git
    cd AWS-capstone-Project
-
-2. **Configure AWS credentials**:
-bash
-aws configure
-
-3. **Initialize Terraform**:
-
-bash
-terraform init
-
-4. **Plan the Deployment**:
-bash
-terraform plan
-
-4. **Apply the Configuration**:
-
-bash
-terraform apply
-
-**Destroy the Infrastructure**
-bash
-terraform destroy
