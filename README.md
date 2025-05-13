@@ -71,3 +71,18 @@ This project automates the deployment of a highly available and scalable WordPre
    ```bash
    git clone https://github.com/fatemehnasirpour/AWS-capstone-Project.git
    cd AWS-capstone-Project
+
+2. **Configure AWS credentials**:
+aws configure
+
+3. **Initialize Terraform**:
+terraform init
+
+4. **Plan the Deployment**:
+terraform plan
+
+4. **Apply the Configuration**:
+terraform apply
+
+**Destroy the Infrastructure**
+terraform destroy
