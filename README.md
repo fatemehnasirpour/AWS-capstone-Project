@@ -40,7 +40,7 @@ AWS-capstone-Project/
 │   └── wordpress.sh
 ├── .gitignore
 └── README.md
-
+```
 
 - **00.main.tf**: Main Terraform configuration file.
 - **01.provider.tf**: Specifies the AWS provider.
