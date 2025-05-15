@@ -28,7 +28,7 @@ This project automates the deployment of a highly available and scalable WordPre
 
 AWS-capstone-Project/
 
-```
+
 ├── 00.main.tf
 ├── 01.provider.tf
 ├── 02.vpc.tf
