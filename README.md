@@ -67,9 +67,10 @@ AWS-capstone-Project/
 
 ## 🛠️ Prerequisites
 
-- **AWS Account**: Active AWS account with necessary permissions.
-- **Terraform**: Installed on your local machine. [Download Terraform](https://www.terraform.io/downloads.html)
-- **Project Source Code**: [GitHub – Nasirpour](https://github.com/fatemehnasirpour/aws-wordpress-project)
+- **AWS Account**: Active AWS account with necessary permissions.  
+- **Terraform**: Installed on your local machine. [Download Terraform](https://www.terraform.io/downloads.html)  
+- **GitHub Account**: Required to clone the repository and manage source code.
+
 
 
 
