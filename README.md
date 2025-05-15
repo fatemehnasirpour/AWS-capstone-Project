@@ -10,6 +10,8 @@ This project automates the deployment of a highly available and scalable WordPre
 - **RDS (MySQL)**: Managed relational database service for WordPress data.
 - **Virtual Private Cloud (VPC)**: Custom network configuration with public and private subnets.
 - **Security Groups**: Control inbound and outbound traffic to AWS resources.
+> 🔒 **Note**: This project was deployed in a **sandbox environment**, which limited access to certain AWS services such as CloudWatch Logs and Systems Manager (SSM).
+
 
 ## 🧰 Technologies & Tools
 
@@ -67,12 +69,7 @@ AWS-capstone-Project/
 
 - **AWS Account**: Active AWS account with necessary permissions.
 - **Terraform**: Installed on your local machine. [Download Terraform](https://www.terraform.io/downloads.html)
-- **AWS CLI**: Configured with your AWS credentials. [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+- **Project Source Code**: [GitHub – Nasirpour](https://github.com/fatemehnasirpour/aws-wordpress-project)
 
-## 🚀 Deployment Instructions
 
-1. **Clone the repository**:
 
-   ```bash
-   git clone https://github.com/fatemehnasirpour/AWS-capstone-Project.git
-   cd AWS-capstone-Project
